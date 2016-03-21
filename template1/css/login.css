@@ -6,7 +6,8 @@ html, body {
  font-family: "Helvetica Neue", Helvetica, sans-serif;
  color: #444;
  -webkit-font-smoothing: antialiased;
- background: #f0f0f0;
+ background: #B7B7B7;
+ margin: 0;
   
 }
  
@@ -14,9 +15,8 @@ html, body {
  position: fixed;
  width: 340px;
  height: 280px;
- top: 50%;
+ top: 190px;
  left: 50%;
- margin-top: -140px;
  margin-left: -170px;
  background: #fff;
  border-radius: 3px;

@@ -7,13 +7,14 @@
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 </head>
 <body>
-<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container1" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container2" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container3" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container4" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <script>
 $(function () {
-    $.getJSON('https://ecoboard-moiseevigor.c9users.io/GIACOMO/telecamera1.json', function (data) {
-    //$.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
-        console.log(data);
-        $('#container').highcharts({
+    $.getJSON('https://ecoboard-moiseevigor.c9users.io/igor/dati3.php', function (data) {
+        $('#container1').highcharts({
 
             chart: {
                 type: 'arearange',
@@ -21,7 +22,127 @@ $(function () {
             },
 
             title: {
-                text: 'Temperature variation by day'
+                text: 'CO variation by day'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+
+            tooltip: {
+                crosshairs: true,
+                shared: true,
+                valueSuffix: '°C'
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Temperatures',
+                data: data
+            }]
+
+        });
+    });
+
+    $.getJSON('https://ecoboard-moiseevigor.c9users.io/igor/dati4.php', function (data) {
+        $('#container2').highcharts({
+
+            chart: {
+                type: 'arearange',
+                zoomType: 'x'
+            },
+
+            title: {
+                text: 'CO2 variation by day'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+
+            tooltip: {
+                crosshairs: true,
+                shared: true,
+                valueSuffix: '°C'
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Temperatures',
+                data: data
+            }]
+
+        });
+    });
+    
+    $.getJSON('https://ecoboard-moiseevigor.c9users.io/igor/dati5.php', function (data) {
+        $('#container3').highcharts({
+
+            chart: {
+                type: 'arearange',
+                zoomType: 'x'
+            },
+
+            title: {
+                text: 'Geiger variation by day'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+
+            tooltip: {
+                crosshairs: true,
+                shared: true,
+                valueSuffix: '°C'
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Temperatures',
+                data: data
+            }]
+
+        });
+    });
+
+    $.getJSON('https://ecoboard-moiseevigor.c9users.io/igor/dati6.php', function (data) {
+        $('#container4').highcharts({
+
+            chart: {
+                type: 'arearange',
+                zoomType: 'x'
+            },
+
+            title: {
+                text: 'O3 variation by day'
             },
 
             xAxis: {

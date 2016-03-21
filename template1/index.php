@@ -1,4 +1,8 @@
-<?php include("db.inc.php"); ?>
+<?php 
+session_start();
+if (!isset($_SESSION["login"])) header("Location: login.php");
+include("db.inc.php");
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,18 +57,18 @@
         <div class="left_col scroll-view">
 
           <div class="navbar nav_title" style="border: 0;">
-            <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Eco Board</span></a>
+            <a href="./" class="site_title"><img src="images/logo_team_006_mini.png" style="height:46px;background:#fff;border-radius:25px"> <span>Eco Board</span></a>
           </div>
           <div class="clearfix"></div>
 
           <!-- menu prile quick info -->
           <div class="profile">
             <div class="profile_pic">
-              <img src="images/cosolini21.jpg" alt="..." class="img-circle profile_img">
+              <img src="images/utenti/<?=$_SESSION["utente_foto"]?>" alt="..." class="img-circle profile_img">
             </div>
             <div class="profile_info">
               <span>Benvenuto,</span>
-              <h2>Roberto Cosolini</h2>
+              <h2><?=$_SESSION["utente_nome"]?> <?=$_SESSION["utente_cognome"]?></h2>
             </div>
           </div>
           <!-- /menu prile quick info -->
@@ -81,9 +85,7 @@
                   <ul class="nav child_menu" style="display: none">
                     <li><a href="./">Riepilogo</a>
                     </li>
-                    <li><a href="?pag=ambiente">Ambiente</a>
-                    </li>
-                    <li><a href="?pag=traffico">Traffico</a>
+                    <li><a href="?pag=traffico">Grafici</a>
                     </li>
                   </ul>
                   </li>
@@ -96,6 +98,7 @@
           <!-- /sidebar menu -->
 
           <!-- /menu footer buttons -->
+          <!--
           <div class="sidebar-footer hidden-small">
             <a data-toggle="tooltip" data-placement="top" title="Settings">
               <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -110,6 +113,7 @@
               <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
             </a>
           </div>
+          //-->
           <!-- /menu footer buttons -->
         </div>
       </div>
@@ -126,7 +130,7 @@
             <ul class="nav navbar-nav navbar-right">
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="images/cosolini21.jpg" alt="">Roberto C.
+                  <img src="images/utenti/<?=$_SESSION["utente_foto"]?>" alt=""><?=$_SESSION["utente_nome"]?>
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
@@ -141,7 +145,7 @@
                   <li>
                     <a href="javascript:;">Aiuto</a>
                   </li>
-                  <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Scollegati</a>
+                  <li><a href="login.php?logout=1"><i class="fa fa-sign-out pull-right"></i> Scollegati</a>
                   </li>
                 </ul>
               </li>
@@ -358,6 +362,482 @@
   <script type="text/javascript" src="js/maps/gdp-data.js"></script>
   <script type="text/javascript" src="js/maps/jquery-jvectormap-world-mill-en.js"></script>
   <script type="text/javascript" src="js/maps/jquery-jvectormap-us-aea-en.js"></script>
+  <!-- ht trieste //-->
+<?php
+if($_GET["pag"] == "traffico") {
+?>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script>
+
+$(function () {
+  Highcharts.setOptions({
+	lang: {
+		months: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',  'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'],
+		weekdays: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab']
+	}
+});
+    $.getJSON('ajax/richieste.php?cosa=telecamere&quale=1', function (data) {
+      $.getJSON('ajax/richieste.php?cosa=telecamere&quale=1&future=1', function (data2) {
+        $('#container1').highcharts({
+            chart: {
+                type: 'areasplinerange',
+                zoomType: 'x'
+            },
+
+            title: {
+                text: 'Autovetture Transitate (Corso Italia 2)'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+
+            tooltip: {
+                crosshairs: true,
+                //shared: true,
+                
+                formatter: function () {
+                    return '<b>' + Highcharts.dateFormat('%a %e %b %Y - %H:%M', new Date(this.x)) + '</b><br>Numero Autovetture: <b>' + -(this.y) + '</b>';
+                }
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Numero Autovetture',
+                data: data},
+                {name: 'Numero Autovetture Teoriche',
+                data: data2,
+                dashStyle: 'longdash',
+                fillOpacity: 0.1
+                }]
+        });
+    });
+    });
+    $(function () {
+    $.getJSON('ajax/richieste.php?cosa=telecamere&quale=2', function (data) {
+        $('#container2').highcharts({
+            chart: {
+                type: 'areasplinerange',
+                zoomType: 'x'
+            },
+            title: {
+                text: 'Autovetture Transitate (Riva Tre Novembre 13c)'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+
+            tooltip: {
+                crosshairs: true,
+                //shared: true,
+                
+                formatter: function () {
+                    return '<b>' + Highcharts.dateFormat('%a %e %b %Y - %H:%M', new Date(this.x)) + '</b><br>Numero Autovetture: <b>' + -(this.y) + '</b>';
+                }
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Numero Autovetture',
+                data: data
+            }]
+        });
+    });
+
+});
+$(function () {
+    $.getJSON('ajax/richieste.php?cosa=telecamere_euro&quale=1', function (data) {
+        $('#container3').highcharts({
+            chart: {
+                type: 'areasplinerange',
+                zoomType: 'x'
+            },
+            title: {
+                text: 'Autovetture Transitate (Riva Tre Novembre 13c)'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+
+            tooltip: {
+                crosshairs: true,
+                //shared: true,
+                
+                formatter: function () {
+                    return '<b>' + Highcharts.dateFormat('%a %e %b %Y - %H:%M', new Date(this.x)) + '</b><br>Numero Autovetture: <b>' + -(this.y) + '</b>';
+                }
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Numero Autovetture',
+                data: data
+            }]
+        });
+    });
+
+});
+
+$(function () {
+                $.getJSON('ajax/richieste.php?cosa=telecamere_euro&quale=1', function (data) {
+                    
+                    console.log(data);
+                    
+                    $('#container3').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Concentrazione CO (Corso Italia 2)'
+                            //text: 'Stacked column chart'
+                        },
+                        xAxis: {
+                            type: 'datetime'
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                //text: 'Total fruit consumption'
+                            },
+                            stackLabels: {
+                                enabled: true,
+                                style: {
+                                    fontWeight: 'bold',
+                                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                                }
+                            }
+                        },
+                        legend: {
+                            align: 'right',
+                            x: -30,
+                            verticalAlign: 'top',
+                            y: 25,
+                            floating: true,
+                            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                            borderColor: '#CCC',
+                            borderWidth: 1,
+                            shadow: false
+                        },
+                        tooltip: {
+                            headerFormat: '<b>{point.x:%d/%m/%Y}</b><br/>',
+                            pointFormat: '{series.name}: {point.y} CO<br/>Totale: {point.stackTotal} CO'
+                            /*
+                            formatter: function () {
+                    return this.series.name + ': <b>' + this.y + '</b><br>Totale: <b>'+ this.stackTotal +'</b>';
+                } */
+                        },
+                        plotOptions: {
+                            column: {
+                                stacking: 'normal',
+                                dataLabels: {
+                                    enabled: false,
+                                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                                    style: {
+                                        textShadow: '0 0 3px black'
+                                    }
+                                }
+                            }
+                        },
+                        series: [{
+                            name: 'E1',
+                            data: data.E1
+                        }, {
+                            name: 'E2',
+                            data: data.E2
+                        }, {
+                            name: 'E3',
+                            data: data.E3
+                        }, {
+                            name: 'E4',
+                            data: data.E4
+                        }, {
+                            name: 'E5',
+                            data: data.E5
+                        }, {
+                            name: 'Ambiente',
+                            data: data.AMBIENTE
+                        }]
+                        /*
+                        series: [{
+                            name: 'John',
+                            data: [3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12]
+                        }, {
+                            name: 'Jane',
+                            data: [1, 3, 4, 3, 3, 5, 4, 1, 3, 4, 3, 3, 5, 4, 1, 3, 4, 3, 3, 5, 4, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12]
+                        }]
+                        */
+                    });
+                });
+                    /*
+                    $('#container').highcharts({
+                        chart: {
+                            //type: 'areaspline'
+                            type: 'stackedcolumn'
+                            
+                        },
+                        title: {
+                            text: 'Average fruit consumption during one week'
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'left',
+                            verticalAlign: 'top',
+                            x: 150,
+                            y: 100,
+                            floating: true,
+                            borderWidth: 1,
+                            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                            
+                            plotBands: [{ // visualize the weekend
+                                from: 4.5,
+                                to: 6.5,
+                                color: 'rgba(68, 170, 213, .2)'
+                            }]
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Fruit units'
+                            }
+                        },
+                        tooltip: {
+                            shared: true,
+                            valueSuffix: ' units'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            areaspline: {
+                                fillOpacity: 0.5
+                            }
+                        },
+                        series: [{
+                            name: 'Totale',
+                            data: null
+                        }, {
+                            name: 'E1',
+                            data: data.E1
+                        }, {
+                            name: 'E2',
+                            data: data.E2
+                        }, {
+                            name: 'E3',
+                            data: data.E3
+                        }, {
+                            name: 'E4',
+                            data: data.E4
+                        }, {
+                            name: 'E5',
+                            data: data.E5
+                        }, {
+                            name: 'Ambiente',
+                            data: null
+                        }]
+                    });
+                    */
+            });
+  $(function () {
+                $.getJSON('ajax/richieste.php?cosa=telecamere_euro&quale=2', function (data) {
+                    
+                    console.log(data);
+                    
+                    $('#container4').highcharts({
+                        chart: {
+                            type: 'column'
+                        },
+                        title: {
+                            text: 'Concentrazione CO (Riva Tre Novembre 13c)'
+                            //text: 'Stacked column chart'
+                        },
+                        xAxis: {
+                            type: 'datetime'
+                        },
+                        yAxis: {
+                            min: 0,
+                            title: {
+                                //text: 'Total fruit consumption'
+                            },
+                            stackLabels: {
+                                enabled: true,
+                                style: {
+                                    fontWeight: 'bold',
+                                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                                }
+                            }
+                        },
+                        legend: {
+                            align: 'right',
+                            x: -30,
+                            verticalAlign: 'top',
+                            y: 25,
+                            floating: true,
+                            backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                            borderColor: '#CCC',
+                            borderWidth: 1,
+                            shadow: false
+                        },
+                        tooltip: {
+                            headerFormat: '<b>{point.x:%d/%m/%Y}</b><br/>',
+                            pointFormat: '{series.name}: {point.y} CO<br/>Totale: {point.stackTotal} CO'
+                            /*
+                            formatter: function () {
+                    return this.series.name + ': <b>' + this.y + '</b><br>Totale: <b>'+ this.stackTotal +'</b>';
+                } */
+                        },
+                        plotOptions: {
+                            column: {
+                                stacking: 'normal',
+                                dataLabels: {
+                                    enabled: false,
+                                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                                    style: {
+                                        textShadow: '0 0 3px black'
+                                    }
+                                }
+                            }
+                        },
+                        series: [{
+                            name: 'E1',
+                            data: data.E1
+                        }, {
+                            name: 'E2',
+                            data: data.E2
+                        }, {
+                            name: 'E3',
+                            data: data.E3
+                        }, {
+                            name: 'E4',
+                            data: data.E4
+                        }, {
+                            name: 'E5',
+                            data: data.E5
+                        }, {
+                            name: 'Ambiente',
+                            data: data.AMBIENTE
+                        }]
+                        /*
+                        series: [{
+                            name: 'John',
+                            data: [3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12]
+                        }, {
+                            name: 'Jane',
+                            data: [1, 3, 4, 3, 3, 5, 4, 1, 3, 4, 3, 3, 5, 4, 1, 3, 4, 3, 3, 5, 4, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12, 3, 4, 3, 5, 4, 10, 12]
+                        }]
+                        */
+                    });
+                });
+                    /*
+                    $('#container').highcharts({
+                        chart: {
+                            //type: 'areaspline'
+                            type: 'stackedcolumn'
+                            
+                        },
+                        title: {
+                            text: 'Average fruit consumption during one week'
+                        },
+                        legend: {
+                            layout: 'vertical',
+                            align: 'left',
+                            verticalAlign: 'top',
+                            x: 150,
+                            y: 100,
+                            floating: true,
+                            borderWidth: 1,
+                            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                            
+                            plotBands: [{ // visualize the weekend
+                                from: 4.5,
+                                to: 6.5,
+                                color: 'rgba(68, 170, 213, .2)'
+                            }]
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Fruit units'
+                            }
+                        },
+                        tooltip: {
+                            shared: true,
+                            valueSuffix: ' units'
+                        },
+                        credits: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            areaspline: {
+                                fillOpacity: 0.5
+                            }
+                        },
+                        series: [{
+                            name: 'Totale',
+                            data: null
+                        }, {
+                            name: 'E1',
+                            data: data.E1
+                        }, {
+                            name: 'E2',
+                            data: data.E2
+                        }, {
+                            name: 'E3',
+                            data: data.E3
+                        }, {
+                            name: 'E4',
+                            data: data.E4
+                        }, {
+                            name: 'E5',
+                            data: data.E5
+                        }, {
+                            name: 'Ambiente',
+                            data: null
+                        }]
+                    });
+                    */
+            });
+
+});
+</script>
+<?php
+}
+?>
+<!-- ht trieste //-->
   <!-- pace -->
   <script src="js/pace/pace.min.js"></script>
   <script>
@@ -521,11 +1001,17 @@
 <script>
 $( document ).ready(function() {
   var aa = 1500;
+  var bb = 800;
   $('#conta_aa').text(aa);
+  $('#conta_bb').text(bb);
   setInterval(function(){
     aa=aa+5;
   $('#conta_aa').text(aa);
   }, 2000);
+  setInterval(function(){
+    bb=bb+4;
+  $('#conta_bb').text(bb);
+  }, 3000);
 });
 </script>
 </html>

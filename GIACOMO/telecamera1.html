@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+</head>
+<body>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<script>
+$(function () {
+    $.getJSON('dati1.php', function (data) {
+        $('#container').highcharts({
+            chart: {
+                type: 'areasplinerange',
+                zoomType: 'x'
+            },
+
+            title: {
+                text: 'Autovetture Transitate (Telecamera #1)'
+            },
+
+            xAxis: {
+                type: 'datetime'
+            },
+
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+
+            tooltip: {
+                crosshairs: true,
+                //shared: true,
+                
+                formatter: function () {
+                    return 'Numero Autovetture: <b>' + -(this.y) + '</b>';
+                }
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            series: [{
+                name: 'Numero Autovetture',
+                data: data
+            }]
+        });
+    });
+
+});
+</script>
+</body>
+</html>
